@@ -1,0 +1,19 @@
+[package]
+name = "music_player"
+version = "0.1.0"
+edition = "2021"
+authors = ["Amin Xare <amnxare.com>"]
+description = "A terminal-based music player built with Rust and Ratatui"
+
+[dependencies]
+ratatui = "0.29.0"  # For terminal UI
+crossterm = "0.28.1"  # For terminal input/output handling
+rodio = "0.18.1"    # For audio playback
+anyhow = "1.0.86"   # For error handling
+log = "0.4.22"      # Logging framework
+env_logger = "0.11.5"  # For logging to terminal
+serde = { version = "1.0.210", features = ["derive"] }  # For configuration serialization
+toml = "0.8.19"     # For parsing TOML configuration files
+
+[dev-dependencies]
+tempfile = "3.12.0"  # For creating temporary files in tests
