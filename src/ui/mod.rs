@@ -12,6 +12,7 @@ use ratatui::{
 use std::io;
 
 mod views;
+mod components;
 
 pub struct UI {}
 
