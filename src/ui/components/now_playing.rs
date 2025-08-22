@@ -1,42 +1,91 @@
 use ratatui::{
-    layout::{Constraint, Direction, Layout, Rect},
+    layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Gauge, Paragraph, Wrap},
     Frame,
 };
 
-struct Song {
-    title: String,
-    artist: String,
-    duration: u32, // in seconds
-    progress: u32, // in seconds
-}
+use crate::app::state::Song;
 
-// pub fn draw_music_player(f: &mut Frame, area: Rect, song: &Song, is_playing: bool) {
-pub fn draw_music_player(f: &mut Frame, area: Rect) {
-    let song = Song {
-        artist: "artist".into(),
-        duration: 522,
-        progress: 90,
-        title: "title".into(),
-    };
-    let is_playing = true;
-
-    // Main layout: vertical split for song info, progress bar, and controls
+// draw controllers and progress bar
+fn draw_controllers(f: &mut Frame, area: Rect, song: &Song, is_playing: bool) {
+    // Split layout horizontally: 80% for progress bar, 20% for controllers
     let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .margin(1)
-        .constraints(
-            [
-                Constraint::Length(3), // Song info
-                Constraint::Length(3), // Progress bar
-                Constraint::Length(3), // Controls
-            ]
-            .as_ref(),
-        )
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Percentage(80), // Progress bar
+            Constraint::Percentage(20), // Controllers
+        ])
         .split(area);
 
+    // Render progress bar
+    let progress_ratio = if song.duration > 0 {
+        song.progress as f64 / song.duration as f64
+    } else {
+        0.0
+    };
+
+    let progress_bar = Gauge::default()
+        .gauge_style(
+            Style::default()
+                .fg(Color::LightGreen)
+                .bg(Color::Black)
+                .add_modifier(Modifier::ITALIC),
+        )
+        .percent((progress_ratio * 100.0) as u16)
+        .label(format!(
+            "{} / {}",
+            format_time(song.progress),
+            format_time(song.duration)
+        ));
+
+    // Render controls with vertical centering
+    let play_pause_symbol = if is_playing { "⏸" } else { "▶" };
+    let controls = Paragraph::new(Line::from(vec![
+        Span::styled(
+            " ⏮ ",
+            Style::default()
+                .fg(Color::Blue)
+                .add_modifier(Modifier::BOLD),
+        ),
+        Span::raw(" "),
+        Span::styled(
+            play_pause_symbol,
+            Style::default()
+                .fg(Color::Blue)
+                .add_modifier(Modifier::BOLD),
+        ),
+        Span::raw(" "),
+        Span::styled(
+            " ⏭ ",
+            Style::default()
+                .fg(Color::Blue)
+                .add_modifier(Modifier::BOLD),
+        ),
+    ]))
+    .alignment(Alignment::Center)
+    .block(
+        Block::default()
+            .borders(Borders::NONE)
+            .style(Style::default()),
+    );
+
+    // Create a vertically centered layout for controls
+    let controls_area = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([
+            Constraint::Min(0),    // Spacer
+            Constraint::Length(1), // Controls
+            Constraint::Min(0),    // Spacer
+        ])
+        .split(chunks[1])[1]; // Use the middle chunk for controls
+
+    f.render_widget(progress_bar, chunks[0]);
+    f.render_widget(controls, controls_area);
+}
+
+fn draw_song_info(f: &mut Frame, area: Rect, song: &Song) {
     // Song info section
     let song_info = Paragraph::new(vec![
         Line::from(vec![Span::styled(
@@ -63,85 +112,29 @@ pub fn draw_music_player(f: &mut Frame, area: Rect) {
     )
     .wrap(Wrap { trim: true });
 
-    // Progress bar
-    let progress_ratio = if song.duration > 0 {
-        song.progress as f64 / song.duration as f64
-    } else {
-        0.0
-    };
-    let progress_bar = Gauge::default()
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .border_style(Style::default().fg(Color::White))
-                .title(" Progress ")
-                .title_style(Style::default().fg(Color::Yellow)),
-        )
-        .gauge_style(
-            Style::default()
-                .fg(Color::LightGreen)
-                .bg(Color::Black)
-                .add_modifier(Modifier::ITALIC),
-        )
-        .percent((progress_ratio * 100.0) as u16)
-        .label(format!(
-            "{} / {}",
-            format_time(song.progress),
-            format_time(song.duration)
-        ));
+    // Render widgets
+    f.render_widget(song_info, area);
+}
 
-    // Controls section
-    let play_pause_symbol = if is_playing { "⏸" } else { "▶" };
-    let controls = Paragraph::new(vec![Line::from(vec![
-        Span::styled(
-            " ⏮ ",
-            Style::default()
-                .fg(Color::White)
-                .bg(Color::DarkGray)
-                .add_modifier(Modifier::BOLD),
-        ),
-        Span::raw(" "),
-        Span::styled(
-            play_pause_symbol,
-            Style::default()
-                .fg(Color::Green)
-                .bg(Color::DarkGray)
-                .add_modifier(Modifier::BOLD),
-        ),
-        Span::raw(" "),
-        Span::styled(
-            " ⏭ ",
-            Style::default()
-                .fg(Color::White)
-                .bg(Color::DarkGray)
-                .add_modifier(Modifier::BOLD),
-        ),
-        Span::raw(" "),
-        Span::styled(
-            " 🔉 ",
-            Style::default()
-                .fg(Color::Blue)
-                .bg(Color::DarkGray)
-                .add_modifier(Modifier::BOLD),
-        ),
-    ])])
-    .block(
-        Block::default()
-            .borders(Borders::ALL)
-            .border_style(Style::default().fg(Color::White))
-            .title(" Controls ")
-            .title_style(
-                Style::default()
-                    .fg(Color::Yellow)
-                    .add_modifier(Modifier::BOLD),
-            ),
-    )
-    .alignment(ratatui::layout::Alignment::Center);
+pub fn draw_music_player(f: &mut Frame, area: Rect, song: &Option<Song>, is_playing: bool) {
+    // Main layout: vertical split for song info, progress bar, and controls
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .margin(1)
+        .constraints(
+            [
+                Constraint::Min(0),    // Song info
+                Constraint::Length(1), // Progress bar
+            ]
+            .as_ref(),
+        )
+        .split(area);
 
     // Render widgets
-    f.render_widget(song_info, chunks[0]);
-    f.render_widget(progress_bar, chunks[1]);
-    f.render_widget(controls, chunks[2]);
+    if let Some(song) = song {
+        draw_song_info(f, chunks[0], &song);
+        draw_controllers(f, chunks[1], &song, is_playing)
+    }
 }
 
 // Helper function to format time in MM:SS

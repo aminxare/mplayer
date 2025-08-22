@@ -1,7 +1,8 @@
 use anyhow::Ok;
 
-mod ui;
 mod app;
+mod audio;
+mod ui;
 
 fn main() -> anyhow::Result<()> {
     // Initialize logging

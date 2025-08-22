@@ -4,14 +4,14 @@ use ratatui::{
     Frame,
 };
 
-use crate::ui::components;
+use crate::{app::state::AppState, ui::components};
 
-pub fn views(frame: &mut Frame) {
+pub fn views(frame: &mut Frame, state: &AppState) {
     let main_layout = Layout::new(
         Direction::Vertical,
         [
             Constraint::Percentage(15), // top ---> headers, tabs and ...
-            Constraint::Percentage(60),    // main
+            Constraint::Percentage(60), // main
             Constraint::Percentage(25), // footer
         ],
     )
@@ -34,5 +34,10 @@ pub fn views(frame: &mut Frame) {
 
     frame.render_widget(text1, main_layout[0]);
     frame.render_widget(text2, main_layout[1]);
-    components::now_playing::draw_music_player(frame, main_layout[2]);
+    components::now_playing::draw_music_player(
+        frame,
+        main_layout[2],
+        &state.current_song,
+        state.is_playing,
+    );
 }
