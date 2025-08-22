@@ -59,8 +59,12 @@ impl App {
                     }
                     // پخش آهنگ وقتی 'p' زده می‌شه
                     if key.code == crossterm::event::KeyCode::Char('p') {
-                        if let Some(path) = &self.state.song_path {
-                            self.player.play(path)?;
+                        if self.state.is_playing {
+                            if let Some(path) = &self.state.song_path {
+                                self.player.play(path)?;
+                            }
+                        } else {
+                            self.player.pause();
                         }
                     }
                 }

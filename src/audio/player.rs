@@ -19,6 +19,7 @@ impl AudioPlayer {
         let file = File::open(path)?;
         let source = Decoder::new(BufReader::new(file))?;
         self.sink.append(source);
+        self.resume();
         Ok(())
     }
 
