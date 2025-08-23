@@ -57,7 +57,7 @@ impl App {
                     if handle_events(Event::Key(key), &mut self.state)? {
                         break; // if pressed 'q' then exit
                     }
-                    // پخش آهنگ وقتی 'p' زده می‌شه
+                    
                     if key.code == crossterm::event::KeyCode::Char('p') {
                         if self.state.is_playing {
                             if let Some(path) = &self.state.song_path {

@@ -1,7 +1,7 @@
 use crate::app::state::AppState;
 use ratatui::Frame;
 
-mod components;
+mod widgets;
 mod views;
 
 pub struct UI {

@@ -1,10 +1,15 @@
+use std::{cell::RefCell, rc::Rc};
+
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout},
     widgets::{Block, BorderType, Borders, Paragraph},
     Frame,
 };
 
-use crate::{app::state::AppState, ui::components};
+use crate::{
+    app::state::{AppState, Song},
+    ui::widgets::{self, status_bar::StatusBar},
+};
 
 pub fn views(frame: &mut Frame, state: &AppState) {
     let main_layout = Layout::new(
@@ -12,9 +17,11 @@ pub fn views(frame: &mut Frame, state: &AppState) {
         [
             Constraint::Percentage(15), // top ---> headers, tabs and ...
             Constraint::Percentage(60), // main
-            Constraint::Percentage(25), // footer
+            Constraint::Percentage(20), // footer
+            Constraint::Length(2),      // statusbar
         ],
     )
+    .spacing(0)
     .split(frame.area());
 
     let block1 = Block::default()
@@ -34,10 +41,14 @@ pub fn views(frame: &mut Frame, state: &AppState) {
 
     frame.render_widget(text1, main_layout[0]);
     frame.render_widget(text2, main_layout[1]);
-    components::now_playing::draw_music_player(
-        frame,
-        main_layout[2],
-        &state.current_song,
-        state.is_playing,
-    );
+    frame.render_widget(StatusBar, main_layout[3]);
+
+    let song = Rc::new(RefCell::new(Song {
+        artist: "a".into(),
+        duration: 100,
+        progress: 20,
+        title: "t".into(),
+    }));
+
+    frame.render_widget(&widgets::music_player::MusicPlayer { song }, main_layout[2]);
 }

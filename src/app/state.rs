@@ -24,6 +24,7 @@ impl AppState {
         ///TODO:
         let song_path = Path::new(std::env::current_dir().unwrap().to_str().unwrap())
             .join("./assets/sample_music/a.mp3");
+
         Self {
             current_song: None,
             is_playing: false,
