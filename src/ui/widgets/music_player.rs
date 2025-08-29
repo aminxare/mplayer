@@ -1,12 +1,13 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::app::state::Song;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Gauge, Padding, Paragraph, Widget, Wrap},
 };
+
+use crate::audio::song::Song;
 
 pub struct MusicPlayer {
     pub song: Rc<RefCell<Song>>,

@@ -1,35 +1,43 @@
-use std::path::{Path, PathBuf};
+use crate::{audio::library::MusicLibrary, errors::MusicPlayerError};
+use std::path::PathBuf;
 
 pub enum InputMode {
     Normal,
     Editing,
 }
 
-pub struct Song {
-    pub title: String,
-    pub artist: String,
-    pub duration: u32, // in seconds
-    pub progress: u32, // in seconds
-}
-
 pub struct AppState {
-    pub current_song: Option<Song>,
-    pub is_playing: bool,
-    pub input_mode: InputMode,
-    pub song_path: Option<PathBuf>,
+    pub music_libray: MusicLibrary,
+    pub is_playing: bool,           // playback status
+    pub input_mode: InputMode,      // mode of programe
+    pub dir_path: PathBuf,          // Path to the directory where the audio files are located.
 }
 
 impl AppState {
-    pub fn new() -> Self {
-        ///TODO:
-        let song_path = Path::new(std::env::current_dir().unwrap().to_str().unwrap())
-            .join("./assets/sample_music/a.mp3");
+    /// create new AppState
+    /// dir_path: Path to the directory where the audio files are located.
+    pub fn new(dir_path: String) -> anyhow::Result<Self, MusicPlayerError> {
+        let mut music_libray= MusicLibrary::new();
+        let dir_path = PathBuf::from(dir_path);
+       
+        music_libray.scan_directory(&dir_path)?;
 
-        Self {
-            current_song: None,
+
+        //
+        // 
+        // Todo:
+        //     get current song
+        //     next song 
+        //     previous song
+        //     in library
+        // 
+        // 
+
+        Ok(Self {
+            music_libray,
             is_playing: false,
             input_mode: InputMode::Normal,
-            song_path: Some(song_path),
-        }
+            dir_path,
+        })
     }
 }

@@ -1,5 +1,6 @@
 mod app;
 mod audio;
+mod errors;
 mod ui;
 mod utils;
 
@@ -12,7 +13,7 @@ use crossterm::{
 use ratatui::{backend::CrosstermBackend, Terminal};
 
 use app::{events::handle_events, state::AppState};
-use audio::AudioPlayer;
+use audio::player::AudioPlayer;
 
 use crate::utils::helper;
 
@@ -20,13 +21,17 @@ fn main() -> anyhow::Result<()> {
     let mut args = std::env::args();
     // Skip binrary path
     args.next();
-    let override_map = helper::handle_args(&mut args);
+    let override_map =
+        helper::handle_args(&mut args).expect("Something went wrong with reading args...");
+    let dir = override_map
+        .get("dir")
+        .expect("Error occured: No directiory was setted.");
 
     // Initialize logging
     env_logger::init();
 
     let ui = ui::UI::new();
-    let mut state = AppState::new();
+    let mut state = AppState::new(dir.clone())?;
     let player = match AudioPlayer::new() {
         Ok(p) => p,
         Err(e) => {
@@ -70,9 +75,7 @@ fn run_app(
 
                 if key.code == crossterm::event::KeyCode::Char('p') {
                     if state.is_playing {
-                        if let Some(path) = &state.song_path {
-                            player.play(&path)?;
-                        }
+                        player.play(&state.music_libray.get_songs()[0].path)?;
                     } else {
                         player.pause();
                     }

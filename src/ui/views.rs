@@ -1,4 +1,4 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, path::PathBuf, rc::Rc};
 
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout},
@@ -7,8 +7,7 @@ use ratatui::{
 };
 
 use crate::{
-    app::state::{AppState, Song},
-    ui::widgets::{self, status_bar::StatusBar},
+    app::state::AppState, audio::song::Song, ui::widgets::{self, status_bar::StatusBar}
 };
 
 pub fn views(frame: &mut Frame, state: &AppState) {
@@ -48,6 +47,7 @@ pub fn views(frame: &mut Frame, state: &AppState) {
         duration: 100,
         progress: 20,
         title: "t".into(),
+        path: PathBuf::new()
     }));
 
     frame.render_widget(&widgets::music_player::MusicPlayer { song }, main_layout[2]);

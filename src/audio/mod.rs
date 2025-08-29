@@ -1,4 +1,4 @@
-mod library;
-mod player;
-
-pub use player::AudioPlayer;
+pub mod library;
+pub mod player;
+pub mod playlist;
+pub mod song;
