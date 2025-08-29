@@ -14,6 +14,8 @@ log = "0.4.22"      # Logging framework
 env_logger = "0.11.5"  # For logging to terminal
 serde = { version = "1.0.210", features = ["derive"] }  # For configuration serialization
 toml = "0.8.19"     # For parsing TOML configuration files
+id3 = "1.16.3"
+thiserror = "2.0.16"
 
 [dev-dependencies]
 tempfile = "3.12.0"  # For creating temporary files in tests

@@ -31,6 +31,13 @@ impl MusicLibrary {
                 self.songs.push(song);
             }
         }
+        // return error if there no audio file in directory
+        if (self.songs.len() == 0) {
+            return Err(MusicPlayerError::FileNotFound(format!(
+                "No audio file found in {}",
+                dir_path.as_path().to_str().unwrap()
+            )));
+        }
 
         Ok(())
     }

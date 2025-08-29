@@ -7,7 +7,12 @@ use ratatui::{
 };
 
 use crate::{
-    app::state::AppState, audio::song::Song, ui::widgets::{self, status_bar::StatusBar}
+    app::state::AppState,
+    audio::song::Song,
+    ui::widgets::{
+        self,
+        status_bar::{StatusBar, StatusbarState},
+    },
 };
 
 pub fn views(frame: &mut Frame, state: &AppState) {
@@ -40,14 +45,20 @@ pub fn views(frame: &mut Frame, state: &AppState) {
 
     frame.render_widget(text1, main_layout[0]);
     frame.render_widget(text2, main_layout[1]);
-    frame.render_widget(StatusBar, main_layout[3]);
+    frame.render_stateful_widget(
+        StatusBar,
+        main_layout[3],
+        &mut StatusbarState {
+            message: state.status_message.clone(),
+        },
+    );
 
     let song = Rc::new(RefCell::new(Song {
         artist: "a".into(),
         duration: 100,
         progress: 20,
         title: "t".into(),
-        path: PathBuf::new()
+        path: PathBuf::new(),
     }));
 
     frame.render_widget(&widgets::music_player::MusicPlayer { song }, main_layout[2]);
