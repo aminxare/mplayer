@@ -6,13 +6,17 @@ use std::path::PathBuf;
 /// Structure for handling music library
 #[derive(Default)]
 pub struct MusicLibrary {
+    now_playing: Option<u8>, // index of current song that is playing
     pub songs: Vec<Song>,
 }
 
 impl MusicLibrary {
     /// Create new MusicLibrary
     pub fn new() -> Self {
-        MusicLibrary { songs: Vec::new() }
+        MusicLibrary {
+            songs: Vec::new(),
+            now_playing: None,
+        }
     }
 
     /// Scan a directory to find files
@@ -23,7 +27,8 @@ impl MusicLibrary {
                 dir_path
             )));
         }
-
+        
+        self.now_playing = None;
         self.songs.clear(); // Clear previous list
         for entry in fs::read_dir(dir_path)? {
             let entry = entry?;
@@ -45,6 +50,11 @@ impl MusicLibrary {
     /// get list of songs
     pub fn get_songs(&self) -> &Vec<Song> {
         &self.songs
+    }
+
+    // return playing song if exists otherwise it returns None
+    pub fn get_playing_song<'a>(&'a self) -> Option<&'a Song> {
+        self.now_playing.and_then(|x| self.songs.get(x as usize))
     }
 }
 
