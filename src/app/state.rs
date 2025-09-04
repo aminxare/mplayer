@@ -1,4 +1,7 @@
-use crate::{audio::library::MusicLibrary, errors::MusicPlayerError};
+use crate::{
+    audio::{library::MusicLibrary, player::AudioPlayer},
+    errors::MusicPlayerError,
+};
 use std::path::PathBuf;
 
 pub enum InputMode {
@@ -8,6 +11,7 @@ pub enum InputMode {
 
 pub struct AppState {
     pub music_libray: MusicLibrary,
+    pub audio_player: AudioPlayer,
     pub is_playing: bool,       // playback status
     pub input_mode: InputMode,  // mode of programe
     pub dir_path: PathBuf,      // Path to the directory where the audio files are located.
@@ -28,6 +32,7 @@ impl AppState {
             }
         }
 
+        let player = AudioPlayer::new()?;
         //
         //
         // Todo:
@@ -39,11 +44,12 @@ impl AppState {
         //
 
         Ok(Self {
+            audio_player: player,
             music_libray,
             is_playing: false,
             input_mode: InputMode::Normal,
             dir_path,
-            status_message
+            status_message,
         })
     }
 }

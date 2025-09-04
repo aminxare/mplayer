@@ -7,9 +7,16 @@ pub fn handle_events(event: Event, state: &mut AppState) -> anyhow::Result<bool>
         match state.input_mode {
             InputMode::Normal => match key.code {
                 KeyCode::Char('q') => return Ok(true), // exit
-                // KeyCode::Char('i') => state.input_mode = InputMode::Editing, 
+                // KeyCode::Char('i') => state.input_mode = InputMode::Editing,
                 KeyCode::Char('p') => {
                     state.is_playing = !state.is_playing;
+                    if state.is_playing {
+                        state
+                            .audio_player
+                            .play(&state.music_libray.get_songs()[0].path)?;
+                    } else {
+                        state.audio_player.pause();
+                    }
                 }
                 _ => {}
             },
@@ -30,7 +37,7 @@ pub fn handle_events(event: Event, state: &mut AppState) -> anyhow::Result<bool>
                 // }
                 // KeyCode::Esc => {
                 //     state.input.clear();
-                //     state.input_mode = InputMode::Normal; 
+                //     state.input_mode = InputMode::Normal;
                 // }
                 _ => {}
             },

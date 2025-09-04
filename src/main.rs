@@ -13,7 +13,6 @@ use crossterm::{
 use ratatui::{backend::CrosstermBackend, Terminal};
 
 use app::{events::handle_events, state::AppState};
-use audio::player::AudioPlayer;
 
 use crate::utils::helper;
 
@@ -32,13 +31,6 @@ fn main() -> anyhow::Result<()> {
 
     let ui = ui::UI::new();
     let mut state = AppState::new(dir.clone())?;
-    let player = match AudioPlayer::new() {
-        Ok(p) => p,
-        Err(e) => {
-            eprintln!("Error occured on creating AudioPlayer: {e}");
-            panic!()
-        }
-    };
 
     // Set up terminal
     enable_raw_mode()?;
@@ -48,7 +40,7 @@ fn main() -> anyhow::Result<()> {
     let mut terminal = Terminal::new(backend)?;
 
     // Run the app
-    run_app(&mut terminal, &mut state, ui, player)?;
+    run_app(&mut terminal, &mut state, ui)?;
 
     // Clean up terminal
     disable_raw_mode()?;
@@ -62,24 +54,14 @@ fn run_app(
     terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>,
     state: &mut AppState,
     ui: ui::UI,
-    player: AudioPlayer,
 ) -> Result<()> {
     loop {
         terminal.draw(|f| ui.render_ui(f, state))?;
 
         if event::poll(std::time::Duration::from_millis(100))? {
-            if let Event::Key(key) = event::read()? {
-                if handle_events(Event::Key(key), state)? {
-                    break; // if pressed 'q' then exit
-                }
-
-                if key.code == crossterm::event::KeyCode::Char('p') {
-                    if state.is_playing {
-                        player.play(&state.music_libray.get_songs()[0].path)?;
-                    } else {
-                        player.pause();
-                    }
-                }
+            let e = event::read()?;
+            if handle_events(e, state)? {
+                break; // if pressed 'q' then exit
             }
         }
     }
