@@ -3,20 +3,22 @@ use crate::errors::MusicPlayerError;
 use std::fs::{self, DirEntry};
 use std::path::PathBuf;
 
+pub trait AudioSource {
+    fn get_song<'a>(&'a self, song_id: usize) -> Option<&'a Song>;
+    fn get_songs(&self) -> &[Song];
+    fn search_title<'a>(&'a self, title: &'a str) -> Vec<&'a Song>;
+}
+
 /// Structure for handling music library
 #[derive(Default)]
 pub struct MusicLibrary {
-    now_playing: Option<u8>, // index of current song that is playing
-    pub songs: Vec<Song>,
+    songs: Vec<Song>,
 }
 
 impl MusicLibrary {
     /// Create new MusicLibrary
     pub fn new() -> Self {
-        MusicLibrary {
-            songs: Vec::new(),
-            now_playing: None,
-        }
+        MusicLibrary { songs: Vec::new() }
     }
 
     /// Scan a directory to find files
@@ -27,8 +29,7 @@ impl MusicLibrary {
                 dir_path
             )));
         }
-        
-        self.now_playing = None;
+
         self.songs.clear(); // Clear previous list
         for entry in fs::read_dir(dir_path)? {
             let entry = entry?;
@@ -36,8 +37,9 @@ impl MusicLibrary {
                 self.songs.push(song);
             }
         }
+
         // return error if there no audio file in directory
-        if (self.songs.len() == 0) {
+        if self.songs.len() == 0 {
             return Err(MusicPlayerError::FileNotFound(format!(
                 "No audio file found in {}",
                 dir_path.as_path().to_str().unwrap()
@@ -45,16 +47,6 @@ impl MusicLibrary {
         }
 
         Ok(())
-    }
-
-    /// get list of songs
-    pub fn get_songs(&self) -> &Vec<Song> {
-        &self.songs
-    }
-
-    // return playing song if exists otherwise it returns None
-    pub fn get_playing_song<'a>(&'a self) -> Option<&'a Song> {
-        self.now_playing.and_then(|x| self.songs.get(x as usize))
     }
 }
 
@@ -71,4 +63,25 @@ fn process_entry(entry: &DirEntry) -> Option<Song> {
         }
     }
     None
+}
+
+impl AudioSource for MusicLibrary {
+    fn get_song<'a>(&'a self, song_id: usize) -> Option<&'a Song> {
+        self.songs.get(song_id)
+    }
+
+    /// get list of songs
+    fn get_songs(&self) -> &[Song] {
+        &self.songs
+    }
+
+    fn search_title<'a>(&'a self, title: &'a str) -> Vec<&'a Song> {
+        let title = title.to_lowercase();
+        let result = self
+            .songs
+            .iter()
+            .filter(|&s| s.title.to_lowercase().contains(title.as_str()))
+            .collect::<Vec<&Song>>();
+        result
+    }
 }

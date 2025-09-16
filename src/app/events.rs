@@ -13,7 +13,7 @@ pub fn handle_events(event: Event, state: &mut AppState) -> anyhow::Result<bool>
                     if state.is_playing {
                         state
                             .audio_player
-                            .play(&state.music_libray.get_songs()[0].path)?;
+                            .play()?;
                     } else {
                         state.audio_player.pause();
                     }
