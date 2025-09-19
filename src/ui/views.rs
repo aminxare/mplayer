@@ -53,13 +53,7 @@ pub fn views(frame: &mut Frame, state: &AppState) {
         },
     );
 
-    let song = Rc::new(RefCell::new(Song {
-        artist: "a".into(),
-        duration: 100,
-        progress: 20,
-        title: "t".into(),
-        path: PathBuf::new(),
-    }));
+    let song = state.audio_player.current_song();
 
     frame.render_widget(&widgets::music_player::MusicPlayer { song }, main_layout[2]);
 }

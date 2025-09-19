@@ -11,9 +11,7 @@ pub fn handle_events(event: Event, state: &mut AppState) -> anyhow::Result<bool>
                 KeyCode::Char('p') => {
                     state.is_playing = !state.is_playing;
                     if state.is_playing {
-                        state
-                            .audio_player
-                            .play()?;
+                        state.audio_player.play()?;
                     } else {
                         state.audio_player.pause();
                     }

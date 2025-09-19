@@ -5,12 +5,13 @@ use std::io::BufReader;
 use std::rc::Rc;
 
 use crate::audio::library::AudioSource;
+use crate::audio::song::Song;
 use crate::errors::MusicPlayerError;
 
 pub struct AudioPlayer {
     sink: Sink,
     source: Rc<RefCell<dyn AudioSource>>,
-    now_playing: Cell<Option<u8>>, // index of current playing song
+    now_playing: Cell<Option<usize>>, // index of current playing song
     _stream: OutputStream,         // نگه داشتن OutputStream برای جلوگیری از drop شدن
 }
 
@@ -60,5 +61,13 @@ impl AudioPlayer {
 
     pub fn stop(&self) {
         self.sink.stop();
+    }
+
+    pub fn current_song(&self) -> Option<Song> {
+        if let Some(idx) = self.now_playing.get() {
+            self.source.borrow().get_song(idx).cloned()
+        } else {
+            None
+        }
     }
 }

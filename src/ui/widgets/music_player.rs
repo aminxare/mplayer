@@ -1,25 +1,28 @@
-use std::{cell::RefCell, rc::Rc};
-
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Gauge, Padding, Paragraph, Widget, Wrap},
 };
+use std::{cell::RefCell, default, rc::Rc};
 
-use crate::audio::song::Song;
+use crate::audio::song::{self, Song};
 
 pub struct MusicPlayer {
-    pub song: Rc<RefCell<Song>>,
+    pub song: Option<Song>,
 }
 
 impl MusicPlayer {
     fn progress_bar<'a>(&self) -> Gauge<'a> {
-        let song = self.song.borrow();
+        let (duration, progress) = if let Some(s) = &self.song {
+            (s.duration, s.progress)
+        } else {
+            (0, 0)
+        };
 
         // Render progress bar
-        let progress_ratio = if song.duration > 0 {
-            song.progress as f64 / song.duration as f64
+        let progress_ratio = if duration > 0 {
+            progress as f64 / duration as f64
         } else {
             0.0
         };
@@ -34,8 +37,8 @@ impl MusicPlayer {
             .percent((progress_ratio * 100.0) as u16)
             .label(format!(
                 "{} / {}",
-                format_time(song.progress),
-                format_time(song.duration)
+                format_time(progress),
+                format_time(duration)
             ));
 
         progress_bar
@@ -43,16 +46,25 @@ impl MusicPlayer {
 
     // print song information
     fn info(&self) -> Paragraph<'_> {
-        let song = self.song.borrow();
+        let song = &self.song;
+        let title = match song {
+            Some(s) => s.title.clone(),
+            None => String::new(),
+        };
+        let artist = match song {
+            Some(s) => s.artist.clone(),
+            None => String::new(),
+        };
+
         let song_info = Paragraph::new(vec![
             Line::from(vec![Span::styled(
-                song.title.to_string(),
+                title,
                 Style::default()
                     .fg(Color::Cyan)
                     .add_modifier(Modifier::BOLD),
             )]),
             Line::from(vec![Span::styled(
-                song.artist.to_string(),
+                artist,
                 Style::default().fg(Color::LightMagenta),
             )]),
         ])
