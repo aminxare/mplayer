@@ -12,7 +12,7 @@ pub struct AudioPlayer {
     sink: Sink,
     source: Rc<RefCell<dyn AudioSource>>,
     now_playing: Cell<Option<usize>>, // index of current playing song
-    _stream: OutputStream,         // نگه داشتن OutputStream برای جلوگیری از drop شدن
+    _stream: OutputStream,            // نگه داشتن OutputStream برای جلوگیری از drop شدن
 }
 
 impl AudioPlayer {
@@ -30,8 +30,10 @@ impl AudioPlayer {
     pub fn play(&self) -> anyhow::Result<(), MusicPlayerError> {
         let source = self.source.borrow();
 
-        if source.get_songs().len() > 0 && self.now_playing.get() == None {
-            self.now_playing.set(Some(0)) // first song of the list
+        if source.get_songs().len() > 0 {
+            if self.now_playing.get() == None {
+                self.now_playing.set(Some(0)) // first song of the list
+            }
         } else {
             return Err(MusicPlayerError::PlaylistError(String::from(
                 "Playlist is empty!",
