@@ -1,12 +1,10 @@
+use crate::audio::song::Song;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Gauge, Padding, Paragraph, Widget, Wrap},
 };
-use std::{cell::RefCell, default, rc::Rc};
-
-use crate::audio::song::{self, Song};
 
 pub struct MusicPlayer {
     pub song: Option<Song>,

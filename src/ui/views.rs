@@ -1,5 +1,3 @@
-use std::{cell::RefCell, path::PathBuf, rc::Rc};
-
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout},
     widgets::{Block, BorderType, Borders, Paragraph},
@@ -8,7 +6,6 @@ use ratatui::{
 
 use crate::{
     app::state::AppState,
-    audio::song::Song,
     ui::widgets::{
         self,
         status_bar::{StatusBar, StatusbarState},
