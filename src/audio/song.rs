@@ -1,13 +1,14 @@
 use id3::{Tag, TagLike};
 use std::path::PathBuf;
+use std::time::Duration;
 
 /// Entity for song information
 #[derive(Clone, Debug)]
 pub struct Song {
     pub title: String,
     pub artist: String,
-    pub duration: u32, // in seconds
-    pub progress: u32, // in seconds
+    pub duration: f32, // in seconds
+    pub progress: f32, // in seconds
     pub path: PathBuf,
 }
 
@@ -20,12 +21,13 @@ impl Song {
         let title = String::from(tag.title().unwrap_or("Unkown"));
         let artist = String::from(tag.artist().unwrap_or("Unkown"));
         let duration = tag.duration().unwrap_or(0);
+        let duration = Duration::from_millis(duration as u64).as_secs_f32();
 
         Ok(Self {
             title,
             artist,
             duration,
-            progress: 0,
+            progress: 0.0,
             path: path_str.clone(),
         })
     }

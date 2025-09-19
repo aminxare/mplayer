@@ -15,11 +15,11 @@ impl MusicPlayer {
         let (duration, progress) = if let Some(s) = &self.song {
             (s.duration, s.progress)
         } else {
-            (0, 0)
+            (0.0, 0.0)
         };
 
         // Render progress bar
-        let progress_ratio = if duration > 0 {
+        let progress_ratio = if duration > 0.0 {
             progress as f64 / duration as f64
         } else {
             0.0
@@ -35,8 +35,8 @@ impl MusicPlayer {
             .percent((progress_ratio * 100.0) as u16)
             .label(format!(
                 "{} / {}",
-                format_time(progress),
-                format_time(duration)
+                format_time(progress as u32),
+                format_time(duration as u32)
             ));
 
         progress_bar
