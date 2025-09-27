@@ -8,6 +8,7 @@ use crate::{
     app::state::AppState,
     ui::widgets::{
         self,
+        playlist::PlayList,
         status_bar::{StatusBar, StatusbarState},
     },
 };
@@ -38,10 +39,12 @@ pub fn views(frame: &mut Frame, state: &AppState) {
         .borders(Borders::ALL);
 
     let text1 = Paragraph::new("HEADER").block(block1);
-    let text2 = Paragraph::new("MAIN").block(block2);
+    // let text2 = Paragraph::new("MAIN").block(block2);
+
+    let play_list = PlayList;
 
     frame.render_widget(text1, main_layout[0]);
-    frame.render_widget(text2, main_layout[1]);
+    frame.render_widget(play_list, main_layout[1]);
     frame.render_stateful_widget(
         StatusBar,
         main_layout[3],
