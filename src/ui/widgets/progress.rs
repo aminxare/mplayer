@@ -8,7 +8,7 @@ use ratatui::{
 use crate::audio::song::Song;
 
 pub struct ProgressBar;
-pub struct  ProgressBarState<'a> {
+pub struct ProgressBarState<'a> {
     song: &'a Option<Song>,
 }
 

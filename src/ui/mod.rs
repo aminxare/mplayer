@@ -1,8 +1,8 @@
 use crate::app::state::AppState;
 use ratatui::Frame;
 
-mod widgets;
 mod views;
+mod widgets;
 
 pub struct UI {
     // current_song: Song
