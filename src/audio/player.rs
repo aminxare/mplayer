@@ -72,4 +72,10 @@ impl AudioPlayer {
             None
         }
     }
+
+    pub fn get_songs(&self) -> Vec<Song> {
+        let source = self.source.clone();
+        let source = source.borrow();
+        source.get_songs().to_vec()
+    }
 }

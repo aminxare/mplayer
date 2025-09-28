@@ -7,9 +7,7 @@ use crate::{
 };
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
-    text::{Line, Span},
-    widgets::{Block, Borders, Padding, Paragraph, StatefulWidget, Widget, Wrap},
+    widgets::{StatefulWidget, Widget},
 };
 
 pub struct MusicPlayer {
@@ -23,7 +21,6 @@ impl Widget for &MusicPlayer {
     {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
-            .margin(1)
             .constraints(
                 [
                     Constraint::Min(0),    // Song info

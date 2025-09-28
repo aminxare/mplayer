@@ -8,7 +8,7 @@ use crate::{
     app::state::AppState,
     ui::widgets::{
         self,
-        playlist::PlayList,
+        playlist::{PlayList, PlayListState},
         status_bar::{StatusBar, StatusbarState},
     },
 };
@@ -32,19 +32,13 @@ pub fn views(frame: &mut Frame, state: &AppState) {
         .border_type(BorderType::Rounded)
         .borders(Borders::ALL);
 
-    let block2 = Block::default()
-        .title(" MPlayer ")
-        .title_alignment(Alignment::Center)
-        .border_type(BorderType::Rounded)
-        .borders(Borders::ALL);
-
     let text1 = Paragraph::new("HEADER").block(block1);
-    // let text2 = Paragraph::new("MAIN").block(block2);
 
     let play_list = PlayList;
+    let mut play_list_state = PlayListState::new(state.audio_player.get_songs());
 
     frame.render_widget(text1, main_layout[0]);
-    frame.render_widget(play_list, main_layout[1]);
+    frame.render_stateful_widget(play_list, main_layout[1], &mut play_list_state);
     frame.render_stateful_widget(
         StatusBar,
         main_layout[3],

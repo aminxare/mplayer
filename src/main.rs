@@ -6,8 +6,7 @@ mod utils;
 
 use anyhow::Result;
 use crossterm::{
-    event::{self, Event},
-    execute,
+    event, execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{backend::CrosstermBackend, Terminal};

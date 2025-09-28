@@ -50,7 +50,7 @@ impl<'a> StatefulWidget for &'a SongInfo {
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .border_style(Style::default().fg(Color::White))
+                .border_type(ratatui::widgets::BorderType::Rounded)
                 .title(" Now Playing ")
                 .title_style(
                     Style::default()
