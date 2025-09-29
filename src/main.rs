@@ -36,7 +36,7 @@ fn main() -> Result<()> {
     let mut terminal = Terminal::new(backend)?;
 
     // Run the app
-    app.run(&mut terminal);
+    app.run(&mut terminal)?;
 
     // Clean up terminal
     disable_raw_mode()?;

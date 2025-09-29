@@ -18,7 +18,6 @@ pub fn handle_args(args: &mut std::env::Args) -> anyhow::Result<HashMap<&'static
                 override_map.insert("dir", String::from(path));
                 Ok(override_map)
             }
-            _ => Err(()),
         }
     } else {
         eprintln!("Oops! tell me where is your music...");

@@ -1,13 +1,12 @@
 use crate::{
     audio::{library::MusicLibrary, player::AudioPlayer},
     errors::MusicPlayerError,
+    ui::UI,
 };
 use anyhow::Result;
 use crossterm::event;
 use ratatui::{prelude::CrosstermBackend, Terminal};
 use std::{cell::RefCell, path::PathBuf, rc::Rc};
-
-use crate::ui::UI;
 
 mod events;
 
@@ -15,7 +14,6 @@ pub enum InputMode {
     Normal,
     Editing,
 }
-
 
 pub struct App {
     ui: UI,
@@ -32,11 +30,11 @@ impl App {
         let status_message = Rc::new(RefCell::new(String::new()));
         let mut music_libray = Box::new(MusicLibrary::new());
 
-        if let Err(e) = music_libray.scan_directory(&dir_path) {
-            if let MusicPlayerError::FileNotFound(error_message) = e {
-                let mut msg = status_message.borrow_mut();
-                *msg = error_message;
-            }
+        if let Err(MusicPlayerError::FileNotFound(error_message)) =
+            music_libray.scan_directory(&dir_path)
+        {
+            let mut msg = status_message.borrow_mut();
+            *msg = error_message;
         }
 
         let audio_player = AudioPlayer::new(music_libray)?;

@@ -30,8 +30,8 @@ impl AudioPlayer {
         let source = &self.source;
         self.now_playing.set(index);
         self.stop();
-        if source.get_songs().len() > 0 {
-            if self.now_playing.get() == None {
+        if !source.get_songs().is_empty() {
+            if self.now_playing.get().is_none() {
                 self.now_playing.set(Some(0)) // first song of the list
             }
         } else {
@@ -40,11 +40,9 @@ impl AudioPlayer {
             )));
         }
 
-        let song = source
-            .get_song(self.now_playing.get().unwrap() as usize)
-            .ok_or(MusicPlayerError::FileNotFound(String::from(
-                "Audio file not found",
-            )))?;
+        let song = source.get_song(self.now_playing.get().unwrap()).ok_or(
+            MusicPlayerError::FileNotFound(String::from("Audio file not found")),
+        )?;
 
         let file = File::open(song.path.clone())?;
         let source = Decoder::new(BufReader::new(file))?;

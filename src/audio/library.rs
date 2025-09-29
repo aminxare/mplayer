@@ -4,7 +4,7 @@ use std::fs::{self, DirEntry};
 use std::path::PathBuf;
 
 pub trait AudioSource {
-    fn get_song<'a>(&'a self, song_id: usize) -> Option<&'a Song>;
+    fn get_song(&self, song_id: usize) -> Option<&Song>;
     fn get_songs(&self) -> &[Song];
     fn search_title<'a>(&'a self, title: &'a str) -> Vec<&'a Song>;
 }
@@ -39,7 +39,7 @@ impl MusicLibrary {
         }
 
         // return error if there no audio file in directory
-        if self.songs.len() == 0 {
+        if self.songs.is_empty() {
             return Err(MusicPlayerError::FileNotFound(format!(
                 "No audio file found in {}",
                 dir_path.as_path().to_str().unwrap()
@@ -66,7 +66,7 @@ fn process_entry(entry: &DirEntry) -> Option<Song> {
 }
 
 impl AudioSource for MusicLibrary {
-    fn get_song<'a>(&'a self, song_id: usize) -> Option<&'a Song> {
+    fn get_song(&self, song_id: usize) -> Option<&Song> {
         self.songs.get(song_id)
     }
 
