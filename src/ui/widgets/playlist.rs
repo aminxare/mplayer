@@ -1,8 +1,8 @@
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
-    style::{Style, Stylize},
-    widgets::{Block, List, ListDirection, ListState, Padding, StatefulWidget},
+    style::{Color, Modifier, Style, Stylize},
+    widgets::{Block, Borders, List, ListDirection, ListState, Padding, StatefulWidget},
 };
 
 use crate::audio::song::Song;
@@ -49,12 +49,15 @@ impl FromIterator<Song> for PlayListState {
 
 pub struct PlayListItem {
     title: String,
-    // TODO: implement another fields
+    artist: String,
 }
 
 impl From<Song> for PlayListItem {
     fn from(value: Song) -> Self {
-        Self { title: value.title }
+        Self {
+            title: value.title,
+            artist: value.artist,
+        }
     }
 }
 
@@ -67,14 +70,20 @@ impl StatefulWidget for PlayList {
         let items = state
             .items
             .iter()
-            .map(|i| i.title.clone())
+            .map(|i| format!("{:<50} ({})", i.title.clone(), i.artist.clone()))
             .collect::<Vec<String>>();
 
         let list = List::new(items)
             .block(
-                Block::bordered()
-                    .title("List")
+                Block::default()
+                    .borders(Borders::ALL)
                     .border_type(ratatui::widgets::BorderType::Rounded)
+                    .title(" Playlist ")
+                    .title_style(
+                        Style::default()
+                            .fg(Color::Yellow)
+                            .add_modifier(Modifier::BOLD),
+                    )
                     .padding(Padding::new(1, 1, 1, 1)),
             )
             .style(Style::new().white())

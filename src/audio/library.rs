@@ -1,3 +1,5 @@
+use anyhow::Result;
+
 use crate::audio::song::Song;
 use crate::errors::MusicPlayerError;
 use std::fs::{self, DirEntry};
@@ -22,7 +24,7 @@ impl MusicLibrary {
     }
 
     /// Scan a directory to find files
-    pub fn scan_directory(&mut self, dir_path: &PathBuf) -> anyhow::Result<(), MusicPlayerError> {
+    pub fn scan_directory(&mut self, dir_path: &PathBuf) -> Result<(), MusicPlayerError> {
         if !dir_path.is_dir() {
             return Err(MusicPlayerError::PlaylistError(format!(
                 "Path is not a directory: {:?}",

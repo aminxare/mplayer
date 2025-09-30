@@ -1,8 +1,9 @@
 use crate::app::{App, InputMode};
+use anyhow::Result;
 use crossterm::event::{Event, KeyCode};
 
 impl App {
-    pub fn handle_events(&mut self, event: Event) -> anyhow::Result<bool> {
+    pub fn handle_events(&mut self, event: Event) -> Result<bool> {
         if let Event::Key(key) = event {
             match self.input_mode {
                 InputMode::Normal => match key.code {
@@ -21,7 +22,7 @@ impl App {
                         self.audio_player.play(selected)?;
                     }
 
-                    KeyCode::Char('p') => {
+                    KeyCode::Char('p') | KeyCode::Char('c') => {
                         self.audio_player.toggle_play();
                     }
                     _ => {}

@@ -9,9 +9,13 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use log::{error, info};
 use ratatui::{backend::CrosstermBackend, Terminal};
 
-use crate::{app::App, utils::helper};
+use crate::{
+    app::App,
+    utils::{helper, logger},
+};
 
 fn main() -> Result<()> {
     let mut args = std::env::args();
@@ -24,9 +28,12 @@ fn main() -> Result<()> {
         .expect("Error occured: No directiory was setted.");
 
     // Initialize logging
-    env_logger::init();
+    logger::init();
 
-    let mut app = App::new(dir.to_string())?;
+    let mut app = App::new(dir.to_string()).unwrap_or_else(|e| {
+        error!("{}", e);
+        panic!()
+    });
 
     // Set up terminal
     enable_raw_mode()?;
@@ -36,7 +43,7 @@ fn main() -> Result<()> {
     let mut terminal = Terminal::new(backend)?;
 
     // Run the app
-    app.run(&mut terminal)?;
+    app.run(&mut terminal).unwrap_or_else(|e| info!("{}", e));
 
     // Clean up terminal
     disable_raw_mode()?;

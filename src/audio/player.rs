@@ -1,3 +1,4 @@
+use anyhow::Result;
 use rodio::{Decoder, OutputStream, Sink};
 use std::cell::Cell;
 use std::fs::File;
@@ -16,7 +17,7 @@ pub struct AudioPlayer {
 }
 
 impl AudioPlayer {
-    pub fn new(source: Box<dyn AudioSource>) -> anyhow::Result<Self, MusicPlayerError> {
+    pub fn new(source: Box<dyn AudioSource>) -> Result<Self, MusicPlayerError> {
         let (_stream, stream_handle) = OutputStream::try_default()?;
         let sink = Sink::try_new(&stream_handle)?;
         Ok(AudioPlayer {
@@ -28,7 +29,7 @@ impl AudioPlayer {
         })
     }
 
-    pub fn play(&self, index: Option<usize>) -> anyhow::Result<(), MusicPlayerError> {
+    pub fn play(&self, index: Option<usize>) -> Result<(), MusicPlayerError> {
         let source = &self.source;
         self.now_playing.set(index);
 

@@ -29,11 +29,9 @@ impl App {
         let status_message = Rc::new(RefCell::new(String::new()));
         let mut music_libray = Box::new(MusicLibrary::new());
 
-        if let Err(MusicPlayerError::FileNotFound(error_message)) =
-            music_libray.scan_directory(&dir_path)
-        {
+        if let Err(error_message) = music_libray.scan_directory(&dir_path) {
             let mut msg = status_message.borrow_mut();
-            *msg = error_message;
+            *msg = error_message.to_string();
         }
 
         let audio_player = AudioPlayer::new(music_libray)?;
@@ -59,9 +57,18 @@ impl App {
 
             if event::poll(std::time::Duration::from_millis(100))? {
                 let e = event::read()?;
-                if self.handle_events(e)? {
-                    break; // if pressed 'q' then exit
-                }
+
+                match self.handle_events(e) {
+                    Ok(exit) => {
+                        if exit {
+                            break;
+                        }
+                    }
+                    Err(error) => {
+                        let mut s = self.status_message.borrow_mut();
+                        *s = error.to_string();
+                    }
+                };
             }
         }
         Ok(())
