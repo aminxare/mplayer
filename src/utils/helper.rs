@@ -1,8 +1,12 @@
 use std::collections::HashMap;
+use anyhow::Result;
 
 /// Show docs  
 /// returns a hashmap of args
-pub fn handle_args(args: &mut std::env::Args) -> anyhow::Result<HashMap<&'static str, String>, ()> {
+pub fn handle_args<I>(args: &mut I) -> Result<HashMap<&'static str, String>, ()>
+where
+    I: Iterator<Item = String>,
+{
     let mut override_map = HashMap::new();
     if let Some(arg1) = args.next() {
         match arg1.as_str() {
