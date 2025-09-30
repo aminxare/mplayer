@@ -22,12 +22,7 @@ impl App {
                     }
 
                     KeyCode::Char('p') => {
-                        self.is_playing = !self.is_playing;
-                        if self.is_playing {
-                            self.audio_player.play(None)?;
-                        } else {
-                            self.audio_player.pause();
-                        }
+                        self.audio_player.toggle_play();
                     }
                     _ => {}
                 },

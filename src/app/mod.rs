@@ -18,7 +18,6 @@ pub enum InputMode {
 pub struct App {
     ui: UI,
     audio_player: AudioPlayer,
-    is_playing: bool,                    // playback status
     input_mode: InputMode,               // mode of program
     dir_path: PathBuf,                   // Path to the directory where the audio files are located.
     status_message: Rc<RefCell<String>>, // this message will print on status bar
@@ -45,7 +44,6 @@ impl App {
             audio_player,
             dir_path,
             input_mode: InputMode::Normal,
-            is_playing: false,
             status_message,
         };
         Ok(result)

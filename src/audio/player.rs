@@ -12,6 +12,7 @@ pub struct AudioPlayer {
     source: Box<dyn AudioSource>,
     now_playing: Cell<Option<usize>>, // index of current playing song
     _stream: OutputStream,            // نگه داشتن OutputStream برای جلوگیری از drop شدن
+    is_playing: Cell<bool>,           // playback status
 }
 
 impl AudioPlayer {
@@ -23,12 +24,14 @@ impl AudioPlayer {
             sink,
             source,
             now_playing: Cell::new(None),
+            is_playing: Cell::new(false),
         })
     }
 
     pub fn play(&self, index: Option<usize>) -> anyhow::Result<(), MusicPlayerError> {
         let source = &self.source;
         self.now_playing.set(index);
+
         self.stop();
         if !source.get_songs().is_empty() {
             if self.now_playing.get().is_none() {
@@ -51,15 +54,27 @@ impl AudioPlayer {
         Ok(())
     }
 
+    /// Toggle between pause and resume
+    pub fn toggle_play(&self) {
+        if self.is_playing.get() {
+            self.pause();
+        } else {
+            self.resume();
+        }
+    }
+
     pub fn pause(&self) {
+        self.is_playing.set(false);
         self.sink.pause();
     }
 
     pub fn resume(&self) {
+        self.is_playing.set(true);
         self.sink.play();
     }
 
     pub fn stop(&self) {
+        self.is_playing.set(false);
         self.sink.stop();
     }
 
