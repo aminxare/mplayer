@@ -1,12 +1,9 @@
 use crate::{
     audio::song::Song,
-    ui::widgets::{
-        progress::{ProgressBar, ProgressBarState},
-        song_info::{SongInfo, SongInfoState},
-    },
+    ui::widgets::song_info::{SongInfo, SongInfoState},
 };
 use ratatui::{
-    layout::{Constraint, Direction, Layout, Rect},
+    layout::Rect,
     widgets::{StatefulWidget, Widget},
 };
 
@@ -19,18 +16,6 @@ impl Widget for &MusicPlayer {
     where
         Self: Sized,
     {
-        let chunks = Layout::default()
-            .direction(Direction::Vertical)
-            .constraints(
-                [
-                    Constraint::Min(0),    // Song info
-                    Constraint::Length(1), // Progress bar
-                ]
-                .as_ref(),
-            )
-            .split(area);
-
-        SongInfo.render(chunks[0], buf, &mut SongInfoState::new(&self.song));
-        ProgressBar.render(chunks[1], buf, &mut ProgressBarState::new(&self.song));
+        SongInfo.render(area, buf, &mut SongInfoState::new(&self.song));
     }
 }

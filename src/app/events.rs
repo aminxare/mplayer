@@ -28,24 +28,7 @@ impl App {
                     _ => {}
                 },
                 InputMode::Editing => match key.code {
-                    // KeyCode::Enter => {
-                    //     // وقتی کاربر Enter رو می‌زنه، مسیر رو ذخیره می‌کنیم
-                    //     if !state.input.is_empty() {
-                    //         state.song_path = Some(PathBuf::from(state.input.clone()));
-                    //         state.input.clear();
-                    //         state.input_mode = InputMode::Normal;
-                    //     }
-                    // }
-                    // KeyCode::Char(c) => {
-                    //     state.input.push(c);
-                    // }
-                    // KeyCode::Backspace => {
-                    //     state.input.pop(); // remove latest character
-                    // }
-                    // KeyCode::Esc => {
-                    //     state.input.clear();
-                    //     state.input_mode = InputMode::Normal;
-                    // }
+                    // TODO: implement editing logic later
                     _ => {}
                 },
             }

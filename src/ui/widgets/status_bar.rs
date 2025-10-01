@@ -15,7 +15,7 @@ impl StatefulWidget for StatusBar {
     ) where
         Self: Sized,
     {
-        let t = Paragraph::new(format!("[MODE] - {}", state.message));
+        let t = Paragraph::new(format!("{}", state.message));
         t.render(area, buf);
     }
 }

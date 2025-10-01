@@ -24,7 +24,7 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(path: String) -> Result<Self> {
+    pub fn new(path: String) -> Result<Self, MusicPlayerError> {
         let dir_path = PathBuf::from(path);
         let status_message = Rc::new(RefCell::new(String::new()));
         let mut music_libray = Box::new(MusicLibrary::new());
