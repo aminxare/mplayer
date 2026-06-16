@@ -78,7 +78,7 @@ impl StatefulWidget for PlayList {
                 Block::default()
                     .borders(Borders::ALL)
                     .border_type(ratatui::widgets::BorderType::Rounded)
-                    .title(" Playlist ")
+                    .title(" 🎵 Playlist ")
                     .title_style(
                         Style::default()
                             .fg(Color::Yellow)
@@ -87,8 +87,13 @@ impl StatefulWidget for PlayList {
                     .padding(Padding::new(1, 1, 1, 1)),
             )
             .style(Style::new().white())
-            .highlight_style(Style::new().italic())
-            .highlight_symbol(">> ")
+            .highlight_style(
+                Style::default()
+                    .bg(Color::DarkGray)
+                    .fg(Color::White)
+                    .add_modifier(Modifier::BOLD),
+            )
+            .highlight_symbol("▶ ")
             .repeat_highlight_symbol(true)
             .direction(ListDirection::TopToBottom);
 

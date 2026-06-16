@@ -1,4 +1,7 @@
-use ratatui::widgets::{Paragraph, StatefulWidget, Widget};
+use ratatui::{
+    style::{Color, Style},
+    widgets::{Paragraph, StatefulWidget, Widget},
+};
 
 pub struct StatusbarState {
     pub message: String,
@@ -15,7 +18,8 @@ impl StatefulWidget for StatusBar {
     ) where
         Self: Sized,
     {
-        let t = Paragraph::new(format!("{}", state.message));
+        let t = Paragraph::new(format!(" Status: {}", state.message))
+            .style(Style::default().fg(Color::Gray));
         t.render(area, buf);
     }
 }

@@ -1,17 +1,12 @@
 use anyhow::Result;
 use mplayer::{
     run_app,
-    utils::{helper::handle_args, logger},
+    utils::{helper::parse_args, logger},
 };
 
 fn main() -> Result<()> {
-    let mut args = std::env::args();
-    args.next(); // Skip binrary path
-
-    let override_map = handle_args(&mut args).expect("Failed to parse CLI arguments.");
-    let dir = override_map
-        .get("dir")
-        .expect("Error: No directory was provided.");
+    let args = parse_args();
+    let dir = args.dir.to_str().expect("Invalid directory path");
 
     // Initialize logging
     logger::init();

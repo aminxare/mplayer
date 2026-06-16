@@ -2,7 +2,7 @@ use ratatui::{
     buffer::Buffer,
     layout::Rect,
     style::{Color, Modifier, Style},
-    widgets::{Gauge, StatefulWidget, Widget},
+    widgets::{Block, Borders, Gauge, StatefulWidget, Widget},
 };
 
 use crate::audio::song::Song;
@@ -39,6 +39,12 @@ impl<'a> StatefulWidget for &'a ProgressBar {
             };
 
             let progress_bar = Gauge::default()
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .border_type(ratatui::widgets::BorderType::Rounded)
+                        .title(" Progress "),
+                )
                 .gauge_style(
                     Style::default()
                         .fg(Color::LightGreen)

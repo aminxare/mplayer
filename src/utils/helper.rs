@@ -1,43 +1,19 @@
-use std::collections::HashMap;
-use anyhow::Result;
+use clap::Parser;
+use std::path::PathBuf;
 
-/// Show docs  
-/// returns a hashmap of args
-pub fn handle_args<I>(args: &mut I) -> Result<HashMap<&'static str, String>, ()>
-where
-    I: Iterator<Item = String>,
-{
-    let mut override_map = HashMap::new();
-    if let Some(arg1) = args.next() {
-        match arg1.as_str() {
-            "-v" | "--version" => {
-                println!("Version");
-                Err(())
-            }
-            "-h" | "--help" => {
-                print_help();
-                Err(())
-            }
-            path => {
-                override_map.insert("dir", String::from(path));
-                Ok(override_map)
-            }
-        }
-    } else {
-        eprintln!("Oops! tell me where is your music...");
-        eprintln!("use --help or -h for help");
-        Err(())
-    }
+/// A terminal-based music player built with Rust and Ratatui
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+pub struct Args {
+    /// Directory to scan for music files
+    #[arg(short, long, value_name = "DIR", default_value = ".")]
+    pub dir: PathBuf,
+
+    /// Verbose mode
+    #[arg(short, long, default_value_t = false)]
+    pub verbose: bool,
 }
 
-fn print_help() {
-    println!(
-        "
-            mplayer <musics_dir>
-            Mplayer is simple terminal base music player\n
-
-            -v | --version      Show version
-            -h | --help         Show helps. (this page)          
-        "
-    )
+pub fn parse_args() -> Args {
+    Args::parse()
 }

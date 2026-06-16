@@ -36,16 +36,19 @@ impl<'a> StatefulWidget for &'a SongInfo {
         };
 
         let song_info = Paragraph::new(vec![
-            Line::from(vec![Span::styled(
-                title,
-                Style::default()
-                    .fg(Color::Cyan)
-                    .add_modifier(Modifier::BOLD),
-            )]),
-            Line::from(vec![Span::styled(
-                artist,
-                Style::default().fg(Color::LightMagenta),
-            )]),
+            Line::from(vec![
+                Span::styled("Title:  ", Style::default().fg(Color::Gray)),
+                Span::styled(
+                    title,
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD),
+                ),
+            ]),
+            Line::from(vec![
+                Span::styled("Artist: ", Style::default().fg(Color::Gray)),
+                Span::styled(artist, Style::default().fg(Color::LightMagenta)),
+            ]),
         ])
         .block(
             Block::default()

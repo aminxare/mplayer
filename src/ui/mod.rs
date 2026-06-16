@@ -4,6 +4,8 @@ use crate::audio::{player::AudioPlayer, song::Song};
 
 use ratatui::{
     layout::{Constraint, Direction, Layout},
+    style::{Color, Modifier, Style},
+    widgets::{Block, Borders, Paragraph},
     Frame,
 };
 
@@ -30,28 +32,60 @@ impl UI {
     }
 
     pub fn render(&mut self, frame: &mut Frame, current_song: Option<Song>) {
-        let main_layout = Layout::new(
-            Direction::Vertical,
-            [
-                Constraint::Min(1),         // main
-                Constraint::Percentage(20), // footer
-                Constraint::Length(2),      // statusbar
-            ],
-        )
-        .spacing(0)
-        .split(frame.area());
+        let chunks = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([
+                Constraint::Length(3), // Header
+                Constraint::Min(0),    // Main (Playlist + Info)
+                Constraint::Length(3), // Progress
+                Constraint::Length(3), // Controls
+                Constraint::Length(1), // Status Bar
+            ])
+            .split(frame.area());
 
-        let play_list = PlayList;
+        // Header
+        let header = Paragraph::new(" 🎵 MPlayer - Your Terminal Music Player ")
+            .style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
+            .alignment(ratatui::layout::Alignment::Center)
+            .block(Block::default().borders(Borders::ALL).border_type(ratatui::widgets::BorderType::Rounded));
+        frame.render_widget(header, chunks[0]);
 
-        frame.render_stateful_widget(play_list, main_layout[0], &mut self.list_state);
+        // Main Content (Playlist + Now Playing)
+        let main_chunks = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([
+                Constraint::Percentage(60),
+                Constraint::Percentage(40),
+            ])
+            .split(chunks[1]);
 
+        // Playlist
+        frame.render_stateful_widget(PlayList, main_chunks[0], &mut self.list_state);
+
+        // Now Playing Info
         frame.render_widget(
-            &widgets::music_player::MusicPlayer { song: current_song },
-            main_layout[1],
+            &widgets::music_player::MusicPlayer { song: current_song.clone() },
+            main_chunks[1],
         );
+
+        // Progress Bar
+        frame.render_stateful_widget(
+            &widgets::progress::ProgressBar,
+            chunks[2],
+            &mut widgets::progress::ProgressBarState::new(&current_song),
+        );
+
+        // Controls Help
+        let controls = Paragraph::new(" [q] Quit | [j/k] Navigate | [Enter] Play | [p/c] Pause/Resume ")
+            .style(Style::default().fg(Color::Cyan))
+            .alignment(ratatui::layout::Alignment::Center)
+            .block(Block::default().borders(Borders::ALL).border_type(ratatui::widgets::BorderType::Rounded).title(" Controls "));
+        frame.render_widget(controls, chunks[3]);
+
+        // Status Bar
         frame.render_stateful_widget(
             StatusBar,
-            main_layout[2],
+            chunks[4],
             &mut StatusbarState {
                 message: self.status_message.borrow().clone(),
             },
