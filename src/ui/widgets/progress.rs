@@ -33,7 +33,7 @@ impl<'a> StatefulWidget for &'a ProgressBar {
 
             // Render progress bar
             let progress_ratio = if duration > 0.0 {
-                progress as f64 / duration as f64
+                (progress as f64 / duration as f64).clamp(0.0, 1.0)
             } else {
                 0.0
             };
@@ -51,7 +51,7 @@ impl<'a> StatefulWidget for &'a ProgressBar {
                         .bg(Color::Black)
                         .add_modifier(Modifier::ITALIC),
                 )
-                .percent((progress_ratio * 100.0) as u16)
+                .ratio(progress_ratio)
                 .label(format!(
                     "{} / {}",
                     format_time(progress as u32),

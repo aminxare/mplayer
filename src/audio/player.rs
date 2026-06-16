@@ -80,8 +80,16 @@ impl AudioPlayer {
     }
 
     pub fn current_song(&self) -> Option<Song> {
+        if self.sink.empty() {
+            self.is_playing.set(false);
+        }
+
         if let Some(idx) = self.now_playing.get() {
-            self.source.get_song(idx).cloned()
+            let mut song = self.source.get_song(idx).cloned();
+            if let Some(ref mut s) = song {
+                s.progress = self.sink.get_pos().as_secs_f32();
+            }
+            song
         } else {
             None
         }

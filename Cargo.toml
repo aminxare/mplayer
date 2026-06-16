@@ -8,13 +8,14 @@ description = "A terminal-based music player built with Rust and Ratatui"
 [dependencies]
 ratatui = "0.29.0"  # For terminal UI
 crossterm = "0.28.1"  # For terminal input/output handling
-rodio = "0.18.1"    # For audio playback
+rodio = "0.19.0"    # For audio playback
 anyhow = "1.0.86"   # For error handling
 log = "0.4.22"      # Logging framework
 env_logger = "0.11.5"  # For logging to terminal
 serde = { version = "1.0.210", features = ["derive"] }  # For configuration serialization
 toml = "0.8.19"     # For parsing TOML configuration files
 id3 = "1.16.3"
+mp3-duration = "0.1.10"
 thiserror = "2.0.16"
 clap = { version = "4.5.16", features = ["derive"] }
 

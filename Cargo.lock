@@ -801,6 +801,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mp3-duration"
+version = "0.1.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "348bdc7300502f0801e5b57c448815713cd843b744ef9bda252a2698fdf90a0f"
+dependencies = [
+ "thiserror 1.0.69",
+]
+
+[[package]]
 name = "mplayer"
 version = "0.1.0"
 dependencies = [
@@ -810,6 +819,7 @@ dependencies = [
  "env_logger",
  "id3",
  "log",
+ "mp3-duration",
  "ratatui",
  "rodio",
  "serde",
@@ -1087,9 +1097,9 @@ checksum = "caf4aa5b0f434c91fe5c7f1ecb6a5ece2130b02ad2a590589dda5146df959001"
 
 [[package]]
 name = "rodio"
-version = "0.18.1"
+version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1fceb9d127d515af1586d8d0cc601e1245bdb0af38e75c865a156290184f5b3"
+checksum = "6006a627c1a38d37f3d3a85c6575418cfe34a5392d60a686d0071e1c8d427acb"
 dependencies = [
  "claxon",
  "cpal",
