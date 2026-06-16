@@ -53,7 +53,8 @@ impl App {
     ) -> Result<()> {
         loop {
             let csong = self.audio_player.current_song();
-            terminal.draw(|f| self.ui.render(f, csong))?;
+            let is_playing = self.audio_player.is_playing();
+            terminal.draw(|f| self.ui.render(f, csong, is_playing))?;
 
             if event::poll(std::time::Duration::from_millis(100))? {
                 let e = event::read()?;

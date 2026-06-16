@@ -31,7 +31,7 @@ impl UI {
         }
     }
 
-    pub fn render(&mut self, frame: &mut Frame, current_song: Option<Song>) {
+    pub fn render(&mut self, frame: &mut Frame, current_song: Option<Song>, is_playing: bool) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([
@@ -64,7 +64,10 @@ impl UI {
 
         // Now Playing Info
         frame.render_widget(
-            &widgets::music_player::MusicPlayer { song: current_song.clone() },
+            &widgets::music_player::MusicPlayer { 
+                song: current_song.clone(),
+                is_playing,
+            },
             main_chunks[1],
         );
 

@@ -99,4 +99,8 @@ impl AudioPlayer {
         let source = &self.source;
         source.get_songs()
     }
+
+    pub fn is_playing(&self) -> bool {
+        self.is_playing.get()
+    }
 }
