@@ -14,6 +14,7 @@ pub struct AudioPlayer {
     now_playing: Cell<Option<usize>>, // index of current playing song
     _stream: OutputStream,            // نگه داشتن OutputStream برای جلوگیری از drop شدن
     is_playing: Cell<bool>,           // playback status
+    volume: Cell<f32>,
 }
 
 impl AudioPlayer {
@@ -26,6 +27,7 @@ impl AudioPlayer {
             source,
             now_playing: Cell::new(None),
             is_playing: Cell::new(false),
+            volume: Cell::new(1.0),
         })
     }
 
@@ -51,6 +53,7 @@ impl AudioPlayer {
         let file = File::open(song.path.clone())?;
         let source = Decoder::new(BufReader::new(file))?;
         self.sink.append(source);
+        self.sink.set_volume(self.volume.get());
         self.resume();
         Ok(())
     }
@@ -79,11 +82,65 @@ impl AudioPlayer {
         self.sink.stop();
     }
 
-    pub fn current_song(&self) -> Option<Song> {
-        if self.sink.empty() {
-            self.is_playing.set(false);
+    pub fn next_song(&self) -> Result<(), MusicPlayerError> {
+        let songs_count = self.source.get_songs().len();
+        if songs_count == 0 {
+            return Ok(());
         }
 
+        let next_idx = match self.now_playing.get() {
+            Some(idx) => (idx + 1) % songs_count,
+            None => 0,
+        };
+
+        self.play(Some(next_idx))
+    }
+
+    pub fn previous_song(&self) -> Result<(), MusicPlayerError> {
+        let songs_count = self.source.get_songs().len();
+        if songs_count == 0 {
+            return Ok(());
+        }
+
+        let prev_idx = match self.now_playing.get() {
+            Some(idx) => {
+                if idx == 0 {
+                    songs_count - 1
+                } else {
+                    idx - 1
+                }
+            }
+            None => 0,
+        };
+
+        self.play(Some(prev_idx))
+    }
+
+    pub fn increase_volume(&self) {
+        let new_vol = (self.volume.get() + 0.1).min(2.0);
+        self.volume.set(new_vol);
+        self.sink.set_volume(new_vol);
+    }
+
+    pub fn decrease_volume(&self) {
+        let new_vol = (self.volume.get() - 0.1).max(0.0);
+        self.volume.set(new_vol);
+        self.sink.set_volume(new_vol);
+    }
+
+    pub fn seek_forward(&self) {
+        let current_pos = self.sink.get_pos();
+        let new_pos = current_pos + std::time::Duration::from_secs(5);
+        let _ = self.sink.try_seek(new_pos);
+    }
+
+    pub fn seek_backward(&self) {
+        let current_pos = self.sink.get_pos();
+        let new_pos = current_pos.saturating_sub(std::time::Duration::from_secs(5));
+        let _ = self.sink.try_seek(new_pos);
+    }
+
+    pub fn current_song(&self) -> Option<Song> {
         if let Some(idx) = self.now_playing.get() {
             let mut song = self.source.get_song(idx).cloned();
             if let Some(ref mut s) = song {
@@ -93,6 +150,13 @@ impl AudioPlayer {
         } else {
             None
         }
+    }
+
+    pub fn check_and_play_next(&self) -> Result<(), MusicPlayerError> {
+        if self.is_playing.get() && self.sink.empty() {
+            self.next_song()?;
+        }
+        Ok(())
     }
 
     pub fn get_songs(&self) -> &[Song] {

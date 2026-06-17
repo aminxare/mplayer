@@ -52,6 +52,7 @@ impl App {
         terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>,
     ) -> Result<()> {
         loop {
+            self.audio_player.check_and_play_next()?;
             let csong = self.audio_player.current_song();
             let is_playing = self.audio_player.is_playing();
             terminal.draw(|f| self.ui.render(f, csong, is_playing))?;

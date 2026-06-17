@@ -25,6 +25,22 @@ impl App {
                     KeyCode::Char('p') | KeyCode::Char('c') => {
                         self.audio_player.toggle_play();
                     }
+
+                    KeyCode::Right | KeyCode::Char('d') => {
+                        self.audio_player.seek_forward();
+                    }
+
+                    KeyCode::Left | KeyCode::Char('a') => {
+                        self.audio_player.seek_backward();
+                    }
+
+                    KeyCode::Char('+') | KeyCode::Char('=') => {
+                        self.audio_player.increase_volume();
+                    }
+
+                    KeyCode::Char('-') | KeyCode::Char('_') => {
+                        self.audio_player.decrease_volume();
+                    }
                     _ => {}
                 },
                 InputMode::Editing => match key.code {
