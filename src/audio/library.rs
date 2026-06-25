@@ -1,3 +1,5 @@
+//! Discovery and indexing of playable music files.
+
 use anyhow::Result;
 
 use crate::audio::song::Song;
@@ -5,25 +7,29 @@ use crate::errors::MusicPlayerError;
 use std::fs::{self, DirEntry};
 use std::path::PathBuf;
 
+/// Common behavior for any source that can provide songs to the player.
 pub trait AudioSource {
+    /// Returns the song at the given index if it exists.
     fn get_song(&self, song_id: usize) -> Option<&Song>;
+    /// Returns the full list of available songs.
     fn get_songs(&self) -> &[Song];
+    /// Finds songs whose titles contain the provided text.
     fn search_title<'a>(&'a self, title: &'a str) -> Vec<&'a Song>;
 }
 
-/// Structure for handling music library
+/// In-memory collection of songs discovered from a directory.
 #[derive(Default)]
 pub struct MusicLibrary {
     songs: Vec<Song>,
 }
 
 impl MusicLibrary {
-    /// Create new MusicLibrary
+    /// Creates an empty library ready to be populated.
     pub fn new() -> Self {
         MusicLibrary { songs: Vec::new() }
     }
 
-    /// Scan a directory to find files
+    /// Scans a directory for supported audio files and stores them in the library.
     pub fn scan_directory(&mut self, dir_path: &PathBuf) -> Result<(), MusicPlayerError> {
         if !dir_path.is_dir() {
             return Err(MusicPlayerError::PlaylistError(format!(

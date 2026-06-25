@@ -2,7 +2,7 @@
 name = "mplayer"
 version = "0.1.0"
 edition = "2021"
-authors = ["Amin Xare <amnxare.com>"]
+authors = ["Amin Xare <amnxare@gmail.com>"]
 description = "A terminal-based music player built with Rust and Ratatui"
 
 [dependencies]

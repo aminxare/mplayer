@@ -1,3 +1,8 @@
+//! Application state and input handling for the terminal music player.
+//!
+//! The app module owns the main run loop, the current UI mode, and the
+//! shared status message that is displayed in the status bar.
+
 use crate::{
     audio::{library::MusicLibrary, player::AudioPlayer},
     errors::MusicPlayerError,
@@ -10,28 +15,43 @@ use std::{cell::RefCell, path::PathBuf, rc::Rc};
 
 mod events;
 
+/// The interaction mode currently used by the user interface.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InputMode {
+    /// Standard navigation mode.
     Normal,
+    /// Text-entry mode for editing actions.
     Editing,
 }
 
+/// Top-level application controller.
+///
+/// The app coordinates the UI, audio backend, and input loop while the
+/// player is running.
 pub struct App {
     ui: UI,
     audio_player: AudioPlayer,
-    input_mode: InputMode,               // mode of program
-    dir_path: PathBuf,                   // Path to the directory where the audio files are located.
-    status_message: Rc<RefCell<String>>, // this message will print on status bar
+    input_mode: InputMode,
+    dir_path: PathBuf,
+    status_message: Rc<RefCell<String>>,
 }
 
 impl App {
+    /// Creates a new application instance for the supplied music directory.
+    ///
+    /// The constructor scans the directory for playable tracks, builds the
+    /// audio player, and prepares the UI state.
     pub fn new(path: String) -> Result<Self, MusicPlayerError> {
-        let dir_path = PathBuf::from(path);
+        let dir_path = PathBuf::from(&path);
         let status_message = Rc::new(RefCell::new(String::new()));
         let mut music_libray = Box::new(MusicLibrary::new());
 
         if let Err(error_message) = music_libray.scan_directory(&dir_path) {
             let mut msg = status_message.borrow_mut();
             *msg = error_message.to_string();
+        } else {
+            let mut msg = status_message.borrow_mut();
+            *msg = format!("{}", path.as_str());
         }
 
         let audio_player = AudioPlayer::new(music_libray)?;
@@ -47,6 +67,10 @@ impl App {
         Ok(result)
     }
 
+    /// Runs the main application loop until the user exits.
+    ///
+    /// Each iteration updates playback, redraws the interface, and handles
+    /// any pending keyboard input.
     pub fn run(
         &mut self,
         terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>,

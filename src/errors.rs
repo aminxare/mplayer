@@ -1,8 +1,11 @@
+//! Shared error types used across the application.
+
 use std::io;
 
 use rodio::{decoder::DecoderError, PlayError, StreamError};
 use thiserror::Error;
 
+/// Error type for failures that can occur while running the music player.
 #[derive(Error, Debug)]
 pub enum MusicPlayerError {
     #[error("I/O error: {0}")]

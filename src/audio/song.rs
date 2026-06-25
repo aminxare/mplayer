@@ -1,8 +1,10 @@
+//! Metadata and playback information for a single track.
+
 use id3::{Tag, TagLike};
 use std::path::PathBuf;
 use std::time::Duration;
 
-/// Entity for song information
+/// Metadata for an individual audio file.
 #[derive(Clone, Debug)]
 pub struct Song {
     pub title: String,
@@ -13,9 +15,10 @@ pub struct Song {
 }
 
 impl Song {
-    /// creates new song
-    /// path_str is audio file path
-    /// (for example: path_str = /tmp/my_song.mp3)
+    /// Builds a song object from an audio file path.
+    ///
+    /// The metadata is read from ID3 tags when available and the duration is
+    /// derived from the file format when possible.
     pub fn new(path_str: PathBuf) -> anyhow::Result<Self> {
         let tag = Tag::read_from_path(&path_str)?;
         let title = String::from(tag.title().unwrap_or("Unknown"));
