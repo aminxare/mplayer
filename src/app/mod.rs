@@ -32,7 +32,6 @@ pub struct App {
     ui: UI,
     audio_player: AudioPlayer,
     input_mode: InputMode,
-    dir_path: PathBuf,
     status_message: Rc<RefCell<String>>,
 }
 
@@ -60,7 +59,6 @@ impl App {
         let result = Self {
             ui,
             audio_player,
-            dir_path,
             input_mode: InputMode::Normal,
             status_message,
         };
